@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ROM Annotator</title>
+  <link rel="stylesheet" href="/static/style.css?v=8"
+  /><link rel="stylesheet" href="/static/v2.css?v=8" />
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>ROM Annotator</h1>
+    <nav class="modeswitch">
+      <span class="mode-tab retired">retired &mdash; 3-point (shin)</span>
+      <a href="/v2" class="mode-tab active">go to the 5-point annotator</a>
+    </nav>
+    <div class="topbar-meta" id="pathInfo"></div>
+  </header>
+
+  <section class="controls">
+    <div class="control">
+      <label for="sideSelect">Side</label>
+      <select id="sideSelect">
+        <option value="left">Left</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label>Mode</label>
+      <div class="radio-row">
+        <label class="radio"><input type="radio" name="mode" value="resume" checked /> Resume Existing Work</label>
+        <label class="radio"><input type="radio" name="mode" value="fresh" /> Start Fresh</label>
+      </div>
+    </div>
+
+    <div class="control">
+      <label>&nbsp;</label>
+      <button id="loadBtn" class="primary">Load Images</button>
+    </div>
+
+    <div class="control grow">
+      <label>&nbsp;</label>
+      <div class="queue-info" id="queueInfo">No queue loaded.</div>
+    </div>
+
+    <div class="control">
+      <label class="radio"><input type="checkbox" id="loupeToggle" checked /> Magnifier</label>
+    </div>
+  </section>
+
+  <section class="workspace">
+    <div class="stage" id="stage">
+      <canvas id="canvas"></canvas>
+      <div class="empty-state" id="emptyState">
+        Pick a side and mode, then press <strong>Load Images</strong>.
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Progress</div>
+        <div class="progress-text" id="progressText">&mdash;</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="filename" id="filenameText"></div>
+        <div class="dims" id="dimsText"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title" id="sequenceTitle">Click sequence</div>
+        <ol class="landmark-list" id="landmarkList"></ol>
+        <div class="next-hint" id="nextHint"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Ground-truth angle source</div>
+        <div class="radio-row gt-row">
+          <label class="radio"><input type="radio" name="gtSource" value="screen" id="gtScreen" /> Screen</label>
+          <label class="radio"><input type="radio" name="gtSource" value="manual" id="gtManual" checked /> Manual</label>
+        </div>
+        <div class="angle-note" id="gtNote">Screen = angle photographed on the device display. Manual = recorded by hand.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Shin magnet</div>
+        <div class="magnet-row">
+          <input type="range" id="magnetFactor" min="0.5" max="2.5" step="0.01" value="1" />
+          <span class="magnet-value" id="magnetFactorValue">1.00&times;</span>
+        </div>
+        <div class="magnet-px" id="magnetPx">Place bottom_heel and 5th_metatarsal to show the circle.</div>
+        <label class="radio magnet-toggle"><input type="checkbox" id="edgeSnap" checked /> Snap to leg edge</label>
+        <div class="angle-note">Radius = factor &times; foot length (bottom_heel&rarr;5th_metatarsal). Scroll over the image to adjust; Shift for bigger steps. The circle is never saved into the image.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Ankle angle</div>
+        <div class="angle-readout" id="angleReadout">&mdash;</div>
+        <div class="angle-note">Vertex at bottom_heel. DF = 90&deg; &minus; angle.</div>
+      </div>
+
+      <div class="panel actions">
+        <button id="saveBtn" class="primary" disabled>Save &amp; Next</button>
+        <button id="resetBtn">Reset Clicks</button>
+        <button id="skipBtn">Skip Image</button>
+        <button id="undoBtn" class="subtle">Undo Last Point</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Shortcuts</div>
+        <ul class="shortcuts">
+          <li><kbd>Enter</kbd> Save &amp; Next</li>
+          <li><kbd>R</kbd> Reset clicks</li>
+          <li><kbd>S</kbd> Skip image</li>
+          <li><kbd>Backspace</kbd> Undo last point</li>
+          <li>Drag any placed dot to move it</li>
+          <li>Scroll over image: magnet radius</li>
+        </ul>
+      </div>
+
+      <div class="status" id="status"></div>
+    </aside>
+  </section>
+
+  <script src="/static/app.js?v=7"></script>
+</body>
+</html>

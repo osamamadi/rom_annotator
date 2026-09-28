@@ -1,0 +1,273 @@
+/* ------------------------------------------------------------------
+   v2_malleolus additions. style.css carries the shell (topbar, controls,
+   workspace, sidebar, panels, buttons); everything here is new to the
+   5-point mode and is never loaded by the 3-point page.
+   ------------------------------------------------------------------ */
+
+.modeswitch {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mode-tab {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mode-tab:hover { background: #2b3341; color: var(--text); }
+
+.mode-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: default;
+}
+
+.zoom-forced {
+  font-size: 11px;
+  color: var(--warn);
+  white-space: nowrap;
+}
+
+/* ---------- click sequence ---------- */
+
+.landmark-list .lm-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.35;
+  margin: 2px 0 0 0;
+}
+
+.landmark-list li.critical .lm-name::after {
+  content: "critical";
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--warn);
+  border: 1px solid var(--warn);
+  border-radius: 3px;
+  padding: 0 4px;
+  vertical-align: 1px;
+}
+
+.landmark-list li.relaxed .lm-name::after {
+  content: "low sensitivity";
+  margin-left: 6px;
+  font-size: 9px;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0 4px;
+  vertical-align: 1px;
+}
+
+.landmark-list li.selected {
+  outline: 1px dashed var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- metrics ---------- */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.metric-grid .k { color: var(--muted); }
+.metric-grid .v { text-align: right; font-variant-numeric: tabular-nums; }
+.metric-grid .v.bad { color: var(--err); font-weight: 600; }
+.metric-grid .v.warn { color: var(--warn); font-weight: 600; }
+.metric-grid .v.good { color: var(--ok); }
+
+/* ---------- error budget ---------- */
+
+table.budget {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+table.budget td {
+  padding: 2px 0;
+  vertical-align: baseline;
+}
+
+table.budget td.k { color: var(--muted); }
+table.budget td.mid { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+table.budget td.v { text-align: right; font-variant-numeric: tabular-nums; width: 68px; }
+table.budget tr.total td { border-top: 1px solid var(--line); padding-top: 5px; font-weight: 600; }
+table.budget td.v.bad { color: var(--err); }
+table.budget td.v.warn { color: var(--warn); }
+table.budget td.v.good { color: var(--ok); }
+
+/* ---------- metadata ---------- */
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 6px 8px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.meta-grid label {
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.meta-grid input {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 5px 7px;
+  width: 100%;
+  min-width: 0;
+}
+
+.meta-grid input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.sticky-toggle {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- warning modal ---------- */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .62);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+}
+
+.modal[hidden] { display: none; }
+
+.modal-box {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 20px;
+  width: min(520px, 90vw);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .5);
+}
+
+.modal-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--warn);
+  margin-bottom: 10px;
+}
+
+.modal-list {
+  margin: 0 0 12px 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.modal-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.modal-note code {
+  font-family: ui-monospace, Consolas, monospace;
+  background: var(--panel-2);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* The shared .landmark-list row is a single flex line; the v2 rows carry a
+   wrapped hint underneath, so they need to wrap. */
+.landmark-list li {
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.landmark-list li .lm-name { font-weight: 500; }
+
+.landmark-list .lm-hint { flex: 1 0 100%; }
+
+/* ---------- image navigation ---------- */
+
+.navrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navrow button {
+  flex: 1;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.ray-note {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ---------- RTMW-x auto-suggest ---------- */
+
+.suggest-state {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  max-width: 230px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggest-state.ok { color: var(--ok); }
+.suggest-state.warn { color: var(--warn); }
+
+/* An unconfirmed model suggestion must never look like the annotator's own
+   click - this badge and the dashed ring on the canvas are what separate them. */
+.landmark-list li.suggested .lm-name::after {
+  content: "suggested 4 check it";
+  color: var(--warn);
+  border-color: var(--warn);
+}
+
+.modal-title.refused { color: var(--err); }
+
+.mode-tab.retired {
+  color: var(--err);
+  border-color: var(--err);
+  cursor: default;
+}

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ROM Annotator &mdash; 5-point (v2_malleolus)</title>
+  <link rel="stylesheet" href="/static/style.css?v=8" />
+  <link rel="stylesheet" href="/static/v2.css?v=8" />
+</head>
+<body>
+
+  <header class="topbar">
+    <h1>ROM Annotator &mdash; 5-point</h1>
+    <div class="topbar-meta" id="pathInfo"></div>
+  </header>
+
+  <section class="controls">
+    <div class="control">
+      <label for="sideSelect">Side</label>
+      <select id="sideSelect">
+        <option value="left">Left</option>
+      </select>
+    </div>
+
+    <div class="control">
+      <label>Queue</label>
+      <div class="radio-row">
+        <label class="radio"><input type="radio" name="mode" value="resume" checked /> Resume Existing Work</label>
+        <label class="radio"><input type="radio" name="mode" value="fresh" /> Start Fresh</label>
+      </div>
+    </div>
+
+    <div class="control">
+      <label>&nbsp;</label>
+      <button id="loadBtn" class="primary">Load Images</button>
+    </div>
+
+    <div class="control grow">
+      <label>&nbsp;</label>
+      <div class="queue-info" id="queueInfo">No queue loaded.</div>
+    </div>
+
+    <div class="control">
+      <label>Zoom panel</label>
+      <div class="radio-row">
+        <label class="radio"><input type="checkbox" id="zoomToggle" checked /> Show</label>
+        <span class="zoom-forced" id="zoomForced"></span>
+      </div>
+    </div>
+
+    <div class="control">
+      <label>Construction ray</label>
+      <div class="radio-row">
+        <label class="radio"><input type="checkbox" id="rayToggle" checked /> Show</label>
+        <span class="ray-note">canvas only &mdash; never exported</span>
+      </div>
+    </div>
+
+    <div class="control">
+      <label>Auto-suggest</label>
+      <div class="radio-row">
+        <label class="radio"><input type="checkbox" id="suggestToggle" checked /> malleolus</label>
+        <span class="suggest-state" id="suggestState"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace">
+    <div class="stage" id="stage">
+      <canvas id="canvas"></canvas>
+      <div class="empty-state" id="emptyState">
+        Pick a side, then press <strong>Load Images</strong>.
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="panel">
+        <div class="panel-title">Progress</div>
+        <div class="progress-text" id="progressText">&mdash;</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="filename" id="filenameText"></div>
+        <div class="dims" id="dimsText"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Click sequence</div>
+        <ol class="landmark-list" id="landmarkList"></ol>
+        <div class="next-hint" id="nextHint"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Measurement</div>
+        <div class="angle-readout" id="angleReadout">&mdash;</div>
+        <div class="metric-grid" id="metricGrid"></div>
+        <div class="angle-note">Vertex at bottom_heel, between the foot axis and the leg axis.
+          The leg axis is the rig line, so camera tilt cancels out.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Error budget</div>
+        <table class="budget" id="budgetTable"></table>
+        <div class="angle-note" id="budgetNote">Place the rig points and the foot to see the budget.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Image metadata</div>
+        <div class="meta-grid">
+          <label for="subjectId">subject_id</label>
+          <input id="subjectId" list="vocSubject" autocomplete="off" />
+          <label for="pairId">pair_id</label>
+          <input id="pairId" list="vocPair" autocomplete="off" />
+          <label for="phase">phase</label>
+          <input id="phase" list="vocPhase" autocomplete="off" />
+          <label for="screenAngle">screen_angle</label>
+          <input id="screenAngle" autocomplete="off" placeholder="value on the device display" />
+          <label for="notesField">notes</label>
+          <input id="notesField" autocomplete="off" />
+        </div>
+        <datalist id="vocSubject"></datalist>
+        <datalist id="vocPair"></datalist>
+        <datalist id="vocPhase"></datalist>
+        <label class="radio sticky-toggle"><input type="checkbox" id="stickyMeta" checked />
+          Carry subject_id / pair_id / phase to the next image</label>
+      </div>
+
+      <div class="panel actions">
+        <div class="navrow">
+          <button id="prevBtn" disabled>Previous Image</button>
+          <button id="nextBtn" disabled>Next Image</button>
+        </div>
+        <button id="saveBtn" class="primary" disabled>Save &amp; Next</button>
+        <button id="resetBtn">Reset Clicks</button>
+        <button id="undoBtn" class="subtle">Undo Last Point</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Shortcuts</div>
+        <ul class="shortcuts">
+          <li><kbd>Enter</kbd> Save &amp; Next</li>
+          <li><kbd>R</kbd> Reset clicks</li>
+          <li><kbd>Backspace</kbd> Undo last point</li>
+          <li><kbd>&larr;&uarr;&rarr;&darr;</kbd> Nudge selected point 1&nbsp;px</li>
+          <li><kbd>Shift</kbd>+arrows Nudge 10&nbsp;px</li>
+          <li><kbd>[</kbd> Previous image &nbsp; <kbd>]</kbd> Next image</li>
+          <li>Click a placed dot to select it, drag to move</li>
+        </ul>
+      </div>
+
+      <div class="status" id="status"></div>
+    </aside>
+  </section>
+
+  <div class="modal" id="warnModal" hidden>
+    <div class="modal-box">
+      <div class="modal-title" id="warnTitle">This frame has warnings</div>
+      <ul class="modal-list" id="warnList"></ul>
+      <div class="modal-note" id="warnNote">Saving records each warning in the row's <code>notes</code> column.</div>
+      <div class="modal-actions">
+        <button id="warnCancel">Go back and fix</button>
+        <button id="warnConfirm" class="primary">Save anyway</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/v2.js?v=8"></script>
+</body>
+</html>

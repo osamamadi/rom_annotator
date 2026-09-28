@@ -1,0 +1,17 @@
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pillow>=10.0
+
+# export_coco.py only:
+pandas>=2.0
+
+# RTMW-x malleolus auto-suggest (optional). Without these the annotator works
+# exactly as before: /api/v2/suggest_malleolus answers "unavailable" and the
+# UI quietly says so. rtmlib downloads ~330 MB of ONNX weights into
+# ~/.cache/rtmlib on first run.
+rtmlib>=0.0.13
+onnxruntime>=1.17
+
+# export_deeplabcut.py is legacy 3-point tooling. It is unused by the 5-point
+# scheme and needs `tables` only if you want it to write the .h5 as well.
+# tables
